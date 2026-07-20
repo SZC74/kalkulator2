@@ -32,7 +32,7 @@ describe('SettingsPanel', () => {
     fireEvent.change(input, { target: { value: 'abc' } })
     fireEvent.blur(input)
 
-    expect(input.value).toBe('0,12')
+    expect(input.value).toBe('0,08')
     expect(onChange).not.toHaveBeenCalled()
   })
 })

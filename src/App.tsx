@@ -1,18 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import type { AppStep, LeakItem, ProjectData, ProjectSettings } from './types'
-import { createEmptyProject } from './types'
+import { createEmptyProject, upgradeProject } from './types'
 import { extractFile } from './extraction/client'
 import { deleteProject, loadMostRecentProject, saveProject } from './persistence/database'
 import { createProjectArchive, downloadBlob, importProjectArchive } from './persistence/archive'
 import { ReviewPanel } from './components/ReviewPanel'
 import { SettingsPanel } from './components/SettingsPanel'
 import { ReportView } from './components/ReportView'
-
-interface InstallPromptEvent extends Event {
-  prompt: () => Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
-}
 
 const steps: Array<{ id: AppStep; number: string; label: string }> = [
   { id: 'import', number: '01', label: 'Import zdjęć' },
@@ -28,14 +23,12 @@ function App() {
   const [processing, setProcessing] = useState({ active: false, done: 0, total: 0 })
   const [errors, setErrors] = useState<string[]>([])
   const [savedState, setSavedState] = useState<'saved' | 'saving' | 'error'>('saved')
-  const [online, setOnline] = useState(navigator.onLine)
-  const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null)
   const imageInput = useRef<HTMLInputElement>(null)
   const projectInput = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     loadMostRecentProject()
-      .then((stored) => stored && setProject(stored))
+      .then((stored) => stored && setProject(upgradeProject(stored)))
       .catch(() => setSavedState('error'))
       .finally(() => setReady(true))
   }, [])
@@ -51,22 +44,6 @@ function App() {
     }, 700)
     return () => window.clearTimeout(timer)
   }, [project, ready])
-
-  useEffect(() => {
-    const update = () => setOnline(navigator.onLine)
-    const install = (event: Event) => {
-      event.preventDefault()
-      setInstallPrompt(event as InstallPromptEvent)
-    }
-    window.addEventListener('online', update)
-    window.addEventListener('offline', update)
-    window.addEventListener('beforeinstallprompt', install)
-    return () => {
-      window.removeEventListener('online', update)
-      window.removeEventListener('offline', update)
-      window.removeEventListener('beforeinstallprompt', install)
-    }
-  }, [])
 
   const updateProject = (change: Partial<ProjectData>) => {
     setProject((current) => ({ ...current, ...change, updatedAt: new Date().toISOString() }))
@@ -155,19 +132,12 @@ function App() {
   const importProject = async (file: File) => {
     try {
       const imported = await importProjectArchive(file)
-      setProject({ ...imported, id: crypto.randomUUID(), updatedAt: new Date().toISOString() })
+      setProject(upgradeProject({ ...imported, id: crypto.randomUUID(), updatedAt: new Date().toISOString() }))
       setErrors([])
       setStep(imported.items.length ? 'review' : 'import')
     } catch (error) {
       setErrors([error instanceof Error ? error.message : String(error)])
     }
-  }
-
-  const install = async () => {
-    if (!installPrompt) return
-    await installPrompt.prompt()
-    await installPrompt.userChoice
-    setInstallPrompt(null)
   }
 
   if (!ready) return <div className="loading-screen"><div className="brand-mark">ii</div><p>Otwieranie projektu…</p></div>
@@ -186,9 +156,7 @@ function App() {
           </label>
         </div>
         <div className="header-actions">
-          <span className={`status-pill ${online ? 'online' : 'offline'}`}>{online ? 'Lokalnie · online' : 'Lokalnie · offline'}</span>
           <span className="save-status">{savedState === 'saving' ? 'Zapisywanie…' : savedState === 'error' ? 'Błąd zapisu' : 'Zapisano lokalnie'}</span>
-          {installPrompt && <button className="secondary-button" type="button" onClick={install}>Zainstaluj aplikację</button>}
           <button className="secondary-button" type="button" onClick={exportProject} disabled={!project.items.length}>Eksportuj projekt</button>
           <button className="icon-button" type="button" onClick={() => projectInput.current?.click()} title="Importuj projekt">↥</button>
           <input ref={projectInput} hidden type="file" accept=".zip,.ii500" onChange={(event) => event.target.files?.[0] && importProject(event.target.files[0])} />
@@ -205,11 +173,6 @@ function App() {
               </button>
             ))}
           </div>
-          <div className="privacy-card">
-            <span className="privacy-icon">⌁</span>
-            <strong>Przetwarzanie lokalne</strong>
-            <p>Zdjęcia nie opuszczają tej przeglądarki.</p>
-          </div>
           <div className="side-actions">
             <button className="text-button" type="button" onClick={newProject}>Nowy projekt</button>
             <button className="text-button danger" type="button" onClick={clearProject}>Usuń dane lokalne</button>
@@ -222,7 +185,7 @@ function App() {
           {step === 'import' && (
             <section className="workspace-panel import-panel">
               <div className="section-title">
-                <div><span className="eyebrow">Krok 1</span><h1>Dodaj zdjęcia z kamery</h1><p>Wybierz oryginalne pliki JPG z polskiego interfejsu Fluke ii500, 1280 × 800 px.</p></div>
+                <div><span className="eyebrow">Krok 1</span><h1>Dodaj zdjęcia z kamery</h1><p>Wybierz pliki JPG skopiowane z pamięci kamery. Nie zmieniaj ich nazw.</p></div>
                 {project.items.length > 0 && <div className="count-chip">{project.items.length} w projekcie</div>}
               </div>
               <div
@@ -241,9 +204,9 @@ function App() {
                 <input ref={imageInput} hidden type="file" accept="image/jpeg,.jpg,.jpeg" multiple onChange={(event) => event.target.files && addFiles(event.target.files)} />
               </div>
               <div className="import-facts">
-                <div><span>01</span><strong>Odczyt</strong><p>LeakQ, źródło dB, odległość, data i folder.</p></div>
-                <div><span>02</span><strong>Bez łączenia</strong><p>Jedno zdjęcie zawsze tworzy jedną pozycję.</p></div>
-                <div><span>03</span><strong>Bez korekcji dB</strong><p>Obliczenie używa surowej wartości źródłowej.</p></div>
+                <div><span>01</span><strong>Przetwarzanie lokalne</strong><p>Zdjęcia są analizowane wyłącznie w tej przeglądarce.</p></div>
+                <div><span>02</span><strong>Oryginalne nazwy</strong><p>Nazwa pliku zawiera informacje potrzebne do odczytu daty i folderu.</p></div>
+                <div><span>03</span><strong>Automatyczny odczyt</strong><p>Program odczytuje pomiary i dane zapisane przez kamerę.</p></div>
               </div>
               {project.items.length > 0 && <button className="next-button" type="button" onClick={() => setStep('review')}>Przejdź do weryfikacji <span>→</span></button>}
             </section>

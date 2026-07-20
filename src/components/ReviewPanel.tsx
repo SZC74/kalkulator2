@@ -93,7 +93,7 @@ export function ReviewPanel({ items, onUpdate, onRemove }: Props) {
         <div>
           <span className="eyebrow">Krok 2</span>
           <h2>Sprawdź odczyty</h2>
-          <p>Każde zdjęcie jest osobną pozycją. Wartości zmienione ręcznie zachowują oryginalny odczyt.</p>
+          <p>Możesz poprawić automatycznie odczytane wartości. Po zmianie pierwotny odczyt nadal będzie widoczny pod polem.</p>
         </div>
         <div className="count-chip">{items.length} {items.length === 1 ? 'zdjęcie' : 'zdjęć'}</div>
       </div>

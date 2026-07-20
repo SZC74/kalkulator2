@@ -1,4 +1,4 @@
-# ii500 Report PWA
+# ii500 Report
 
 Client-side TypeScript application for creating compressed-air leak reports from
 Fluke ii500 JPG screenshots. Images are processed locally in a Web Worker and
@@ -31,8 +31,9 @@ npm run preview
 On Windows with Node.js installed, `Uruchom_lokalnie.bat` performs the install,
 builds the app, starts a local server and opens the browser automatically.
 
-The production output is a static PWA in `dist/`. It can be hosted on any HTTPS
-static host or internal web server. No backend is required.
+The production output is a static offline-capable web application in `dist/`.
+It can be hosted on any HTTPS static host or internal web server. No backend is
+required. The application does not display an installation or download prompt.
 
 ## Publish on GitHub Pages
 
@@ -48,8 +49,8 @@ static host or internal web server. No backend is required.
    `https://YOUR-NAME.github.io/REPOSITORY-NAME/`.
 
 Every push to the `main` branch automatically tests, builds and republishes the
-application. GitHub Pages provides HTTPS, which is required for installation
-and offline PWA behavior.
+application. GitHub Pages provides HTTPS, which is required for secure local
+processing and offline caching.
 
 ## Project persistence
 

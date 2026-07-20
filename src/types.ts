@@ -72,13 +72,13 @@ export interface CalculatedItem {
   warnings: string[]
 }
 
-export const APP_VERSION = '1.0.3'
+export const APP_VERSION = '1.0.5'
 
 export const DEFAULT_SETTINGS: ProjectSettings = {
   reportTitle: 'Raport z badania nieszczelności instalacji sprężonego powietrza',
   company: '',
   auditor: '',
-  pricePlnPerM3: 0.12,
+  pricePlnPerM3: 0.08,
   priceConfirmed: false,
   operatingHoursPerYear: 8760,
   calibrationConfirmed: false,
@@ -87,6 +87,22 @@ export const DEFAULT_SETTINGS: ProjectSettings = {
   validLeakQRange: [1, 10],
   validDbRange: [30, 120],
   estimatorDisagreementRatio: 2,
+}
+
+export function upgradeProject(project: ProjectData): ProjectData {
+  const usedPreviousUnconfirmedDefault =
+    project.appVersion !== APP_VERSION &&
+    !project.settings.priceConfirmed &&
+    project.settings.pricePlnPerM3 === 0.12
+
+  return {
+    ...project,
+    appVersion: APP_VERSION,
+    settings: {
+      ...project.settings,
+      pricePlnPerM3: usedPreviousUnconfirmedDefault ? DEFAULT_SETTINGS.pricePlnPerM3 : project.settings.pricePlnPerM3,
+    },
+  }
 }
 
 export function createEmptyProject(): ProjectData {

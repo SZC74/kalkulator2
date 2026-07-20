@@ -9,7 +9,7 @@ const { generateSW } = await import('workbox-build')
 const result = await generateSW({
   mode: 'development',
   globDirectory: 'dist',
-  globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+  globPatterns: ['**/*.{js,css,html,svg}'],
   swDest: 'dist/sw.js',
   navigateFallback: 'index.html',
   cleanupOutdatedCaches: true,

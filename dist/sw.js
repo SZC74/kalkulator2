@@ -3462,26 +3462,17 @@ define([],(function () { 'use strict';
      * See https://goo.gl/S9QRab
      */
     precacheAndRoute([{
-      "url": "manifest.webmanifest",
-      "revision": "dc61d5400fc4e3ddb121815f35b24aa7"
-    }, {
       "url": "index.html",
-      "revision": "32e9c24c285323cd6e5724dc8c1b2111"
+      "revision": "7edade81504ba7e33a7d4a3cd5afee16"
     }, {
       "url": "icon.svg",
       "revision": "d7bc2bc4b10ffc16baca3bd58296de13"
     }, {
-      "url": "icon-512.png",
-      "revision": "f8444f84e0d5a12c5cf83851c4f5119b"
+      "url": "assets/index-hIzP4YGC.css",
+      "revision": "9a41639ad51941cb77c70fec65da4811"
     }, {
-      "url": "icon-192.png",
-      "revision": "64569bc9104c78f6ac71a969d70ab713"
-    }, {
-      "url": "assets/index-nXPdmVtd.js",
-      "revision": "e5cd0b5e57dd4faa7a429ee35a8e86f3"
-    }, {
-      "url": "assets/index-DvlIl3nb.css",
-      "revision": "eb3d522489e2e56df3df16b7f724a035"
+      "url": "assets/index-B6td-UFR.js",
+      "revision": "eb67fdddabc94784a134f87df44ddfba"
     }, {
       "url": "assets/extraction.worker-C3b3X8gm.js",
       "revision": "d9d6aededbafe31b86f3c21a2108ce4e"

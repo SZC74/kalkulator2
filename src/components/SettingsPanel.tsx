@@ -120,6 +120,12 @@ export function SettingsPanel({ settings, onChange }: Props) {
       <details className="advanced-settings">
         <summary>Ustawienia zaawansowane i kalibracja</summary>
         <p className="muted">Zmieniaj te wartości tylko na podstawie zatwierdzonego arkusza kalibracji.</p>
+        <div className="formula-reference">
+          <strong>Postać ogólna równań kalibracyjnych</strong>
+          <code>LeakQ = a × ln(Qv) + b</code>
+          <code>dB = a × ln(Qv) + b</code>
+          <p>Program wyznacza przepływ ze wzoru: Qv = exp((wartość - b) / a), gdzie Qv jest podane w L/min.</p>
+        </div>
         <div className="formula-grid">
           <label className="field">
             <span>LeakQ: współczynnik a</span>

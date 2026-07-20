@@ -37,6 +37,6 @@ describe('calculations', () => {
   it('calculates annual volume and cost', () => {
     const result = calculateItem(baseItem, DEFAULT_SETTINGS)
     expect(result.annualM3LeakQ).toBeCloseTo((result.qLeakQLMin * 60 * 8760) / 1000, 8)
-    expect(result.annualCostLeakQ).toBeCloseTo(result.annualM3LeakQ * 0.12, 8)
+    expect(result.annualCostLeakQ).toBeCloseTo(result.annualM3LeakQ * DEFAULT_SETTINGS.pricePlnPerM3, 8)
   })
 })
