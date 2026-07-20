@@ -42,6 +42,8 @@ describe('report rendering', () => {
     expect(html).toContain('Zestawienie pozycji i kosztów')
     expect(html).toContain('(PLN/rok)')
     expect(html).toContain('Nagłówki i stopki')
+    expect((html.match(/Nagłówki i stopki/g) ?? [])).toHaveLength(1)
+    expect(html.indexOf('Nagłówki i stopki')).toBeLessThan(html.indexOf('<main class="report-document">'))
     expect(html).toContain('Odczyt nie jest korygowany względem odległości')
     expect(html).toContain('Uwagi trwałe')
     expect(html).toContain('Każde zdjęcie jest liczone jako osobna nieszczelność')

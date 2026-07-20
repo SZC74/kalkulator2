@@ -72,7 +72,7 @@ export interface CalculatedItem {
   warnings: string[]
 }
 
-export const APP_VERSION = '1.0.7'
+export const APP_VERSION = '1.0.8'
 
 export const DEFAULT_SETTINGS: ProjectSettings = {
   reportTitle: 'Raport z badania nieszczelności instalacji sprężonego powietrza',

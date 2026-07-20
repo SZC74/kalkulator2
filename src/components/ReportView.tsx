@@ -85,10 +85,14 @@ export function ReportView({ project, onGlobalNotes, onItemNotes }: Props) {
   return (
     <div className="report-shell">
       <div className="report-toolbar no-print">
-        <div>
+        <div className="report-toolbar-copy">
           <span className="eyebrow">Krok 4</span>
           <h2>Podgląd raportu</h2>
           <p>Uwagi wpisane w podglądzie pozostają zapisane w projekcie.</p>
+          <div className="print-guidance">
+            <strong>Przed zapisaniem raportu do PDF</strong>
+            <p>W oknie drukowania wybierz „Więcej ustawień” → „Opcje” i wyłącz „Nagłówki i stopki”. Dzięki temu adres strony, data i numeracja przeglądarki nie pojawią się na wydruku.</p>
+          </div>
         </div>
         <button className="primary-button" type="button" onClick={() => window.print()}>Drukuj / zapisz PDF</button>
       </div>
@@ -137,10 +141,6 @@ export function ReportView({ project, onGlobalNotes, onItemNotes }: Props) {
             <li>Każde zdjęcie jest niezależną pozycją i jest osobno doliczane do sum.</li>
             <li>Wartości są estymacją zależną od kalibracji i warunków akustycznych.</li>
           </ul>
-          <div className="print-guidance">
-            <strong>Przed zapisaniem raportu do PDF</strong>
-            <p>W oknie drukowania wybierz „Więcej ustawień” → „Opcje” i wyłącz „Nagłówki i stopki”. Dzięki temu adres strony, data i numeracja przeglądarki nie pojawią się na wydruku.</p>
-          </div>
           <p className="report-version">Wygenerowano w ii500 Report PWA v{project.appVersion}. Przetwarzanie wykonano lokalnie w przeglądarce.</p>
         </section>
       </main>
