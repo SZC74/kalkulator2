@@ -1,0 +1,16 @@
+{
+  "name": "ii500 Report",
+  "short_name": "ii500 Report",
+  "description": "Lokalny generator raportów nieszczelności z kamery Fluke ii500",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#edf0f1",
+  "theme_color": "#102b3a",
+  "lang": "pl",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
