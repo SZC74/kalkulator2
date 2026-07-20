@@ -174,7 +174,9 @@ function App() {
         <div className="header-actions">
           <span className="save-status">{savedState === 'saving' ? 'Zapisywanie…' : savedState === 'error' ? 'Błąd zapisu' : 'Zapisano lokalnie'}</span>
           <button className="secondary-button" type="button" onClick={exportProject} disabled={!project.items.length}>Eksportuj projekt</button>
-          <button className="icon-button" type="button" onClick={() => projectInput.current?.click()} title="Importuj projekt">↥</button>
+          <button className="icon-button" type="button" onClick={() => projectInput.current?.click()} title="Importuj projekt" aria-label="Importuj projekt">
+            <span className="import-icon" aria-hidden="true">↥</span>
+          </button>
           <input ref={projectInput} hidden type="file" accept=".zip,.ii500" onChange={(event) => event.target.files?.[0] && importProject(event.target.files[0])} />
         </div>
       </header>

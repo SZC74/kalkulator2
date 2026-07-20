@@ -66,6 +66,7 @@
 .secondary-button { border-color: #cdd6da; background: white; color: var(--navy); }
 .secondary-button:hover { border-color: #8fa1aa; }
 .icon-button { min-width: 38px; border-color: var(--line); background: white; color: var(--navy); font-size: 18px; padding: 7px; }
+.import-icon { display: inline-block; transform: rotate(180deg); }
 .text-button { border: 0; background: transparent; color: #aebdc5; text-align: left; padding: 7px 4px; font-size: 11px; }
 .text-button:hover { color: white; }
 .text-button.danger { color: #d88670; }
