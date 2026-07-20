@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { ProjectSettings } from '../types'
 
 interface Props {
@@ -5,12 +6,54 @@ interface Props {
   onChange: (settings: ProjectSettings) => void
 }
 
+interface DecimalInputProps {
+  ariaLabel: string
+  value: number
+  onCommit: (value: number) => void
+  inputMode?: 'decimal' | 'numeric'
+  minimum?: number
+}
+
+function displayNumber(value: number) {
+  return String(value).replace('.', ',')
+}
+
+function DecimalInput({ ariaLabel, value, onCommit, inputMode = 'decimal', minimum }: DecimalInputProps) {
+  const [draft, setDraft] = useState(() => displayNumber(value))
+
+  useEffect(() => setDraft(displayNumber(value)), [value])
+
+  const commit = () => {
+    const parsed = Number(draft.trim().replace(',', '.'))
+    if (!Number.isFinite(parsed) || (minimum !== undefined && parsed < minimum)) {
+      setDraft(displayNumber(value))
+      return
+    }
+    onCommit(parsed)
+    setDraft(displayNumber(parsed))
+  }
+
+  return (
+    <input
+      aria-label={ariaLabel}
+      type="text"
+      inputMode={inputMode}
+      value={draft}
+      onChange={(event) => setDraft(event.target.value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') event.currentTarget.blur()
+        if (event.key === 'Escape') {
+          setDraft(displayNumber(value))
+          event.currentTarget.blur()
+        }
+      }}
+    />
+  )
+}
+
 export function SettingsPanel({ settings, onChange }: Props) {
   const patch = (change: Partial<ProjectSettings>) => onChange({ ...settings, ...change })
-  const number = (value: string, fallback: number) => {
-    const parsed = Number(value.replace(',', '.'))
-    return Number.isFinite(parsed) ? parsed : fallback
-  }
 
   return (
     <section className="workspace-panel settings-panel">
@@ -38,10 +81,11 @@ export function SettingsPanel({ settings, onChange }: Props) {
         <label className="field">
           <span>Cena sprężonego powietrza</span>
           <div className="input-suffix">
-            <input
-              inputMode="decimal"
+            <DecimalInput
+              ariaLabel="Cena sprężonego powietrza"
               value={settings.pricePlnPerM3}
-              onChange={(event) => patch({ pricePlnPerM3: number(event.target.value, settings.pricePlnPerM3) })}
+              minimum={0}
+              onCommit={(pricePlnPerM3) => patch({ pricePlnPerM3 })}
             />
             <span>PLN/m³</span>
           </div>
@@ -49,10 +93,12 @@ export function SettingsPanel({ settings, onChange }: Props) {
         <label className="field">
           <span>Czas pracy</span>
           <div className="input-suffix">
-            <input
+            <DecimalInput
+              ariaLabel="Czas pracy"
               inputMode="numeric"
               value={settings.operatingHoursPerYear}
-              onChange={(event) => patch({ operatingHoursPerYear: number(event.target.value, settings.operatingHoursPerYear) })}
+              minimum={0}
+              onCommit={(operatingHoursPerYear) => patch({ operatingHoursPerYear })}
             />
             <span>h/rok</span>
           </div>
@@ -77,30 +123,34 @@ export function SettingsPanel({ settings, onChange }: Props) {
         <div className="formula-grid">
           <label className="field">
             <span>LeakQ: współczynnik a</span>
-            <input
+            <DecimalInput
+              ariaLabel="LeakQ: współczynnik a"
               value={settings.leakQFormula.a}
-              onChange={(event) => patch({ leakQFormula: { ...settings.leakQFormula, a: number(event.target.value, settings.leakQFormula.a) } })}
+              onCommit={(a) => patch({ leakQFormula: { ...settings.leakQFormula, a } })}
             />
           </label>
           <label className="field">
             <span>LeakQ: współczynnik b</span>
-            <input
+            <DecimalInput
+              ariaLabel="LeakQ: współczynnik b"
               value={settings.leakQFormula.b}
-              onChange={(event) => patch({ leakQFormula: { ...settings.leakQFormula, b: number(event.target.value, settings.leakQFormula.b) } })}
+              onCommit={(b) => patch({ leakQFormula: { ...settings.leakQFormula, b } })}
             />
           </label>
           <label className="field">
             <span>dB: współczynnik a</span>
-            <input
+            <DecimalInput
+              ariaLabel="dB: współczynnik a"
               value={settings.dbFormula.a}
-              onChange={(event) => patch({ dbFormula: { ...settings.dbFormula, a: number(event.target.value, settings.dbFormula.a) } })}
+              onCommit={(a) => patch({ dbFormula: { ...settings.dbFormula, a } })}
             />
           </label>
           <label className="field">
             <span>dB: współczynnik b</span>
-            <input
+            <DecimalInput
+              ariaLabel="dB: współczynnik b"
               value={settings.dbFormula.b}
-              onChange={(event) => patch({ dbFormula: { ...settings.dbFormula, b: number(event.target.value, settings.dbFormula.b) } })}
+              onCommit={(b) => patch({ dbFormula: { ...settings.dbFormula, b } })}
             />
           </label>
         </div>
