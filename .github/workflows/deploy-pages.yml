@@ -34,7 +34,7 @@ jobs:
         run: npm test
 
       - name: Run lint
-        run: npm run lint
+        run: npx oxlint src scripts vite.config.ts
 
       - name: Build production PWA
         run: npm run build
