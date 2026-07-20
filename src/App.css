@@ -124,6 +124,15 @@
 .advanced-settings > .check-row { margin-top: 8px; margin-bottom: 18px; }
 .workspace-footer { width: min(1180px, 100%); margin: 22px auto 0; display: flex; justify-content: space-between; }
 
+.dialog-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: #071923b8; backdrop-filter: blur(3px); }
+.confirm-dialog { width: min(520px, 100%); border: 1px solid var(--line); border-top: 6px solid var(--yellow); background: white; padding: 28px; box-shadow: 0 24px 80px #07192355; }
+.confirm-dialog h2 { margin: 7px 0 10px; color: var(--navy-deep); font-size: 25px; line-height: 1.15; }
+.confirm-dialog > p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.confirm-dialog > small { display: block; margin-top: 12px; color: var(--muted); font-size: 10px; }
+.dialog-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 22px; }
+.danger-outline { border-color: #d9a08e; color: var(--warning); }
+.dialog-cancel { margin-left: auto; color: var(--muted); }
+
 .report-shell { width: 100%; }
 .report-toolbar { width: min(1180px, 100%); margin: 0 auto 22px; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
 .report-document { width: 210mm; margin: 0 auto; background: white; box-shadow: 0 15px 50px #1a303922; }
@@ -218,6 +227,10 @@
   .report-meta, .report-metrics { grid-template-columns: 1fr 1fr; }
   .report-cover, .report-summary, .report-item, .report-method { padding: 22px 16px; }
   .summary-table { display: block; overflow-x: auto; }
+  .confirm-dialog { padding: 22px 18px; }
+  .dialog-actions { display: grid; }
+  .dialog-actions button { width: 100%; }
+  .dialog-cancel { margin-left: 0; text-align: center; }
 }
 
 @page { size: A4 portrait; margin: 12mm; }

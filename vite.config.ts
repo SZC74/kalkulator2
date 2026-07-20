@@ -7,4 +7,7 @@ export default defineConfig({
   // a GitHub Pages project path such as /fluke-ii500-report/.
   base: './',
   plugins: [react()],
+  build: {
+    emptyOutDir: true,
+  },
 })

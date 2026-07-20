@@ -23,6 +23,7 @@ function App() {
   const [processing, setProcessing] = useState({ active: false, done: 0, total: 0 })
   const [errors, setErrors] = useState<string[]>([])
   const [savedState, setSavedState] = useState<'saved' | 'saving' | 'error'>('saved')
+  const [newReportDialogOpen, setNewReportDialogOpen] = useState(false)
   const imageInput = useRef<HTMLInputElement>(null)
   const projectInput = useRef<HTMLInputElement>(null)
 
@@ -108,11 +109,16 @@ function App() {
 
   const removeItem = (id: string) => updateProject({ items: project.items.filter((item) => item.id !== id) })
 
-  const newProject = async () => {
-    if (project.items.length && !window.confirm('Utworzyć nowy projekt? Bieżący projekt pozostanie zapisany w tej przeglądarce.')) return
+  const startNewReport = async () => {
+    try {
+      await deleteProject(project.id)
+    } catch {
+      setSavedState('error')
+    }
     setProject(createEmptyProject())
     setErrors([])
     setStep('import')
+    setNewReportDialogOpen(false)
   }
 
   const clearProject = async () => {
@@ -127,6 +133,16 @@ function App() {
     const blob = await createProjectArchive(project)
     const filename = `${project.name.replace(/[^\p{L}\p{N}._-]+/gu, '_') || 'projekt-ii500'}.ii500.zip`
     downloadBlob(blob, filename)
+  }
+
+  const exportAndStartNewReport = async () => {
+    try {
+      await exportProject()
+      await startNewReport()
+    } catch (error) {
+      setErrors([`Nie udało się wyeksportować projektu: ${error instanceof Error ? error.message : String(error)}`])
+      setNewReportDialogOpen(false)
+    }
   }
 
   const importProject = async (file: File) => {
@@ -174,7 +190,7 @@ function App() {
             ))}
           </div>
           <div className="side-actions">
-            <button className="text-button" type="button" onClick={newProject}>Nowy projekt</button>
+            <button className="text-button" type="button" onClick={() => setNewReportDialogOpen(true)}>Rozpocznij nowy raport</button>
             <button className="text-button danger" type="button" onClick={clearProject}>Usuń dane lokalne</button>
           </div>
         </aside>
@@ -224,6 +240,21 @@ function App() {
           )}
         </section>
       </div>
+      {newReportDialogOpen && (
+        <div className="dialog-backdrop no-print">
+          <section className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="new-report-title">
+            <span className="eyebrow">Nowy raport</span>
+            <h2 id="new-report-title">Co zrobić z bieżącym raportem?</h2>
+            <p>Rozpoczęcie nowego raportu wyczyści bieżący obszar roboczy i usunie jego lokalną kopię z tej przeglądarki.</p>
+            <div className="dialog-actions">
+              <button className="primary-button" type="button" onClick={exportAndStartNewReport} disabled={!project.items.length}>Eksportuj i rozpocznij</button>
+              <button className="secondary-button danger-outline" type="button" onClick={startNewReport}>Rozpocznij bez eksportu</button>
+              <button className="text-button dialog-cancel" type="button" onClick={() => setNewReportDialogOpen(false)}>Anuluj</button>
+            </div>
+            {!project.items.length && <small>Ten raport nie zawiera zdjęć, dlatego eksport jest niedostępny.</small>}
+          </section>
+        </div>
+      )}
     </div>
   )
 }
